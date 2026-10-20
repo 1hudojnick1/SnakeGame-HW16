@@ -49,6 +49,7 @@
     <Compile Include="ConsoleRenderer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShowTextState.cs" />
     <Compile Include="SnakeGameLogic.cs" />
     <Compile Include="SnakeGameplayState.cs" />
   </ItemGroup>

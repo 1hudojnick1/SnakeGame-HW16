@@ -1,8 +1,15 @@
-﻿using System;
+﻿
+using System;
 
 public class SnakeGameLogic : BaseGameLogic
 {
     private SnakeGameplayState gameplayState = new SnakeGameplayState();
+
+    private ShowTextState showTextState = new ShowTextState(2);
+
+    private bool newGamePending = false;
+
+    private int currentLevel;
 
     public override ConsoleColor[] CreatePallet()
     {
@@ -47,15 +54,55 @@ public class SnakeGameLogic : BaseGameLogic
 
     public void GotoGameplay()
     {
+        gameplayState.level = currentLevel;
+
         gameplayState.fieldWidth = screenWidth;
         gameplayState.fieldHeight = screenHeight;
 
         ChangeState(gameplayState);
     }
 
+    public void GoToGameOver()
+    {
+        currentLevel = 0;
+
+        newGamePending = true;
+
+        showTextState.text = "GAME OVER";
+
+        ChangeState(showTextState);
+    }
+
+    public void GoToNextLevel()
+    {
+        currentLevel += 1;
+
+        newGamePending = false;
+
+        showTextState.text = "LEVEL " + currentLevel;
+
+        ChangeState(showTextState);
+    }
+
     public override void Update(float deltaTime)
     {
-        if (currentState != gameplayState)
+        if (currentState != null && !currentState.IsDone())
+            return;
+
+        if (currentState == null ||
+            (currentState == gameplayState && !gameplayState.gameOver))
+        {
+            GoToNextLevel();
+        }
+        else if (currentState == gameplayState && gameplayState.gameOver)
+        {
+            GoToGameOver();
+        }
+        else if (currentState != gameplayState && newGamePending)
+        {
+            GoToNextLevel();
+        }
+        else if (currentState != gameplayState && !newGamePending)
         {
             GotoGameplay();
         }
